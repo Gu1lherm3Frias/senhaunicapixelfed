@@ -16,5 +16,7 @@
         }
     },
     "minimum-stability": "dev",
-    "require": {}
+    "require": {
+        "uspdev/senhaunica": "2.0"
+    }
 }

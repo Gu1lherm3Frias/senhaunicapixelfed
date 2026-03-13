@@ -29,11 +29,6 @@ class LoginUspController extends Controller
 
     public function create(array $data)
     {
-        // if (config('database.default') == 'pgsql') {
-        //     $data['username'] = strtolower($data['username']);
-        //     $data['email'] = strtolower($data['email']);
-        // }
-
         return User::firstOrCreate(
             ['email' => $data['email']],
             [
@@ -47,12 +42,6 @@ class LoginUspController extends Controller
 
 
     public function store(Request $request) {
-        // dd($request->all() + ['password' => Hash::make(Str::random(40))]);
-        // $user = User::firstOrCreate(
-        //     ['email' => $request->email],
-        //     ['password' => Hash::make(Str::random(40))]
-        // );
-
         event(new Registered($user = $this->create($request->all()
             + [
                 'password' => Str::random(40),
@@ -62,14 +51,8 @@ class LoginUspController extends Controller
         )));
 
         $this->guard()->login($user);
-        // dd($user);
-         
-        // Auth::loginUsingId($user->id);
-        // $request->session()->regenerate();
 
         return $this->registered($request, $user)
             ?: redirect($this->redirectPath());
-        
-        // return redirect('/home');
     }
 }
