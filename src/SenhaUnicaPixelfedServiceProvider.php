@@ -14,6 +14,6 @@ class SenhaUnicaPixelfedServiceProvider extends ServiceProvider
 
     public function register()
     {
-        //
+        $this->mergeConfigFrom(__DIR__ . '/../config/senhaunicapixelfed.php','senhaunicapixelfed');
     }
 }

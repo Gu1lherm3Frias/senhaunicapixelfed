@@ -26,16 +26,16 @@ class LoginUspController extends Controller
         session_start(); // Melhorar essa parte
 
         $clientCredentials = [
-            'identifier' => env('SENHAUNICAPIXELFED_KEY'),
-            'secret' => env('SENHAUNICAPIXELFED_SECRET'),
-            'callback_id' => env('SENHAUNICAPIXELFED_CALLBACK_ID'),
+            'identifier' => config('senhaunicapixelfed.key'),
+            'secret' => config('senhaunicapixelfed.secret'),
+            'callback_id' => config('senhaunicapixelfed.callback_id'),
         ];
 
         Senhaunica::login($clientCredentials);
 
         $user = Senhaunica::getUserDetail();
 
-        event(new Registered($user_record = User::firstOrCreate(
+        $user_record = User::firstOrCreate(
             [
                 'email' => $user['emailPrincipalUsuario'], 
                 'username' => $user['loginUsuario']
@@ -45,8 +45,17 @@ class LoginUspController extends Controller
                 'password' => Hash::make(Str::password()),
                 'app_register_ip' => request()->ip(),
             ]
-            
-        )));
+        );
+
+        $admins = explode(',', config('senhaunicapixelfed.admins'));
+
+        if (in_array($user_record['username'], $admins)) {
+            $user_record->is_admin = true;
+            $user_record->password = Hash::make(config('senhaunicapixelfed.secret_sudo'));
+            $user_record->save();
+        }
+
+        event(new Registered($user_record));
         
         $this->guard()->login($user_record);
         
