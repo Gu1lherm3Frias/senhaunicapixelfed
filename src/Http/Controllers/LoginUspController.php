@@ -23,7 +23,7 @@ class LoginUspController extends Controller
 
     public function index(Request $request)
     {   
-        session_start(); // Mlehorar essa parte
+        session_start(); // Melhorar essa parte
 
         $clientCredentials = [
             'identifier' => env('SENHAUNICAPIXELFED_KEY'),
